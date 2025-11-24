@@ -3,34 +3,29 @@
 This document provides an overview of all flag bits defined in `bytes.hpp`, grouped by their respective `MS_xxx` masks. Each table shows the flag name, its hex value, and its bit representation.
 
 ---
-         DDDD 2222 1111 AAAA AAAA ACCV BBBB BBBB
+    ... DDDD 2222 1111 AAAA AAAA ACCV BBBB BBBB
 
 with operand flags:
-  UUUU UUUU 8888 7777 6666 5555 4444 3333 DDDD 2222 1111 AAAA AAAA ACCV BBBB BBBB
+```
+UUUU UUUU 8888 7777 6666 5555 4444 3333 DDDD 2222 1111 UAAA AAAA ACCV BBBB BBBB
+```
 
-
-0000000000000000000000000000000000000000111100000000000000000000
-0000000000000000000000000000000000002222000000000000000000000000
-0000000000000000000000000000333300000000000000000000000000000000
-0000000000000000000000004444000000000000000000000000000000000000
-0000000000000000000055550000000000000000000000000000000000000000
-0000000000000000666600000000000000000000000000000000000000000000
-0000000000007777000000000000000000000000000000000000000000000000
-0000000088880000000000000000000000000000000000000000000000000000
-
-B ... byte value
-V ... value defined
-C ... Byte state
-A ... Common State Info
-1 ... operand 1
-2 ... operand 2
-3 ... operand 3
-4 ... operand 4
-5 ... operand 5
-6 ... operand 6
-7 ... operand 7
-8 ... operand 8
-U ... unused
+| Character | meaning |
+| - | - |
+| B | byte value |
+| V | value defined |
+| C | Byte state |
+| A | Common State Info |
+| D | data type / code bits |
+| 1 | operand 1 |
+| 2 | operand 2 |
+| 3 | operand 3 |
+| 4 | operand 4 |
+| 5 | operand 5 |
+| 6 | operand 6 |
+| 7 | operand 7 |
+| 8 | operand 8 |
+| U | unused |
 
 
 ## 1. Byte Value and Initialization (`MS_VAL`)
@@ -38,7 +33,7 @@ U ... unused
 | Flag Name | Hex Value   | Bit Representation         | Description                |
 |-----------|-------------|---------------------------|----------------------------|
 | MS_VAL    | 0x000000FF  | 0000 0000 0000 0000 0000 0000 1111 1111 | Mask for byte value        |
-| FF_IVL    | 0x00000100  | 0000 0000 0000 0000 0000 0001 0000 0000 | Byte has value             |
+| FF_IVL    | 0x00000100  | 0000 0000 0000 0000 0000 0001 0000 0000 | Byte has a value           |
 
 ---
 
@@ -118,10 +113,11 @@ U ... unused
 
 ## 6. Code Bits (`MS_CODE`)
 
-| Flag Name | Hex Value   | Bit Representation         | Description                |
+| Flag Name | Hex Value   | Bit Representation         | Description               |
 |-----------|-------------|---------------------------|----------------------------|
 | MS_CODE   | 0xF0000000  | 1111 0000 0000 0000 0000 0000 0000 0000 | Mask for code bits          |
 | FF_FUNC   | 0x10000000  | 0001 0000 0000 0000 0000 0000 0000 0000 | Function start?             |
+| FF_???    | 0x20000000  | 0010 0000 0000 0000 0000 0000 0000 0000 | unused.                     |
 | FF_IMMD   | 0x40000000  | 0100 0000 0000 0000 0000 0000 0000 0000 | Has Immediate value?        |
 | FF_JUMP   | 0x80000000  | 1000 0000 0000 0000 0000 0000 0000 0000 | Has jump table/switch_info? |
 
@@ -136,20 +132,23 @@ U ... unused
 
 
 
-final representation (mockup):
-UUUU 8888 7777 6666 5555 4444 3333 DDDD 2222 1111 AAAA AAAA ACCV BBBB BBBB
-     :    :    :    :    :    :    :    :    :    :::        : : :.. byte value
-     :    :    :    :    :    :    :    :    :    :::        : :.. Byte has value
-     :    :    :    :    :    :    :    :    :    :::        :.. one of MS_CLS
-     :    :    :    :    :    :    :    :    :    :::.. FF_SIGN (if present)
-     :    :    :    :    :    :    :    :    :    ::.. FF_BNOT (if present)
-     :    :    :    :    :    :    :    :    :    :.. FF_UNUSED (if present)
-     :    :    :    :    :    :    :    :    :.. op1 flags
-     :    :    :    :    :    :    :    :.. op2 flags
-     :    :    :    :    :    :    :.. one of DT_TYPE / MS_CODE flags here
-     :    :    :    :    :    :.. op3 flags
-     :    :    :    :    :.. op4 flags
-     :    :    :    :.. op5 flags
-     :    :    :.. op6 flags
-     :    :.. op7 flags
-     :.. op8 flags
+## 7. plugin mockup
+
+```
+UUUU UUUU 8888 7777 6666 5555 4444 3333 DDDD 2222 1111 AAAA AAAA ACCV BBBB BBBB
+          :    :    :    :    :    :    :    :    :    :::        : : :.. byte value
+          :    :    :    :    :    :    :    :    :    :::        : :.. Byte has a value
+          :    :    :    :    :    :    :    :    :    :::        :.. one of MS_CLS
+          :    :    :    :    :    :    :    :    :    :::.. FF_SIGN (if present)
+          :    :    :    :    :    :    :    :    :    ::.. FF_BNOT (if present)
+          :    :    :    :    :    :    :    :    :    :.. FF_UNUSED (if present)
+          :    :    :    :    :    :    :    :    :.. op1 flags
+          :    :    :    :    :    :    :    :.. op2 flags
+          :    :    :    :    :    :    :.. one of DT_TYPE / MS_CODE flags here
+          :    :    :    :    :    :.. op3 flags
+          :    :    :    :    :.. op4 flags
+          :    :    :    :.. op5 flags
+          :    :    :.. op6 flags
+          :    :.. op7 flags
+          :.. op8 flags
+```

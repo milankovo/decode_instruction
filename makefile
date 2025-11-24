@@ -8,4 +8,5 @@ $(F)decode_instruction$(O): $(I)bitrange.hpp $(I)bytes.hpp $(I)config.hpp $(I)fp
                   $(I)kernwin.hpp $(I)lines.hpp $(I)llong.hpp               \
                   $(I)loader.hpp $(I)nalt.hpp $(I)netnode.hpp $(I)pro.h     \
                   $(I)range.hpp $(I)segment.hpp $(I)ua.hpp $(I)xref.hpp     \
-                  decode_instruction.cpp
+                  decode_instruction.cpp common_consts.hpp enums.hpp intel_consts.hpp
+
