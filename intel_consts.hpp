@@ -49,6 +49,8 @@ namespace intel
          TO_ENUM(aux_xacquire, "HLE prefix hints"),
          TO_ENUM(aux_xrelease, "HLE prefix hints")});
 
+    static AutoRegister _reg_auxpref_flags(auxpref_flags);
+
     auto registers = std::to_array(
         {
             TO_ENUM(R_none, "No register"),
@@ -247,4 +249,5 @@ namespace intel
 
             TO_ENUM(R_last, "LAST"),
         });
+    static AutoRegister _reg_registers(registers);
 }

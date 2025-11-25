@@ -71,6 +71,8 @@ namespace arm
          TO_ENUM(aux_vpt_then, "(MVE) the insn is in the THEN section of a VPT predication block"),
          TO_ENUM(aux_vpt_else, "(MVE) the insn is in the ELSE section of a VPT predication block")});
 
+    static AutoRegister _reg_auxpref_flags(auxpref_flags);
+
     enum RegNo
     {
         R0,
@@ -507,5 +509,7 @@ namespace arm
             TO_ENUM(V31, "V31"),
             TO_ENUM(ARM_MAXREG, "ARM_MAXREG"),
         });
+
+    static AutoRegister _reg_registers(registers);
 
 }

@@ -1,12 +1,64 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 #define TO_ENUM(X, comment) expanded_flag_t{X, #X, comment}
 
 struct expanded_flag_t
 {
-  int value;
+  long long value;
   const char *name;
   const char *comment;
+};
+
+class FlagRegistry
+{
+public:
+  static FlagRegistry &get()
+  {
+    static FlagRegistry instance;
+    return instance;
+  }
+
+  void register_flag(const char *name, const char *desc)
+  {
+    if (name && desc)
+    {
+      descriptions[name] = desc;
+    }
+  }
+
+  template <typename T>
+  void register_array(const T &arr)
+  {
+    for (const auto &item : arr)
+    {
+      register_flag(item.name, item.comment);
+    }
+  }
+
+  const char *get_description(const char *name)
+  {
+    auto it = descriptions.find(name);
+    if (it != descriptions.end())
+    {
+      return it->second.c_str();
+    }
+    return nullptr;
+  }
+
+private:
+  std::map<std::string, std::string> descriptions;
+};
+
+template <typename T>
+struct AutoRegister
+{
+  AutoRegister(const T &arr)
+  {
+    FlagRegistry::get().register_array(arr);
+  }
 };
 
 template <int N>

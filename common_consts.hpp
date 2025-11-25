@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <bytes.hpp>
 #include "enums.hpp"
 
 /*
@@ -8,7 +9,7 @@
                               ///< meaningful only for ::o_displ type.
                               ///< if set, base displacement (op_t::addr)
                               ///< doesn't exist.
-#define OF_OUTER_DISP   0x40  ///< outer displacement exists.
+#define OF_OUTER_DISP   0x40  ///< outer displacement exists.                              
                               ///< meaningful only for ::o_displ type.
                               ///< if set, outer displacement (op_t::value) exists.
 #define PACK_FORM_DEF   0x20  ///< packed factor defined.
@@ -24,6 +25,8 @@ auto operand_flags = std::to_array({
     TO_ENUM(OF_NUMBER, "the operand can be converted to a number only"), // OF_NUMBER
     TO_ENUM(OF_SHOW, "should the operand be displayed?")                 // OF_SHOW
 });
+
+static AutoRegister _reg_operand_flags(operand_flags);
 
 /*
 #define dt_byte         0     ///< 8 bit integer
@@ -69,6 +72,8 @@ auto dtype_flags = std::to_array({
     TO_ENUM(dt_byte64, "512 bit integer"),   // dt_byte64
     TO_ENUM(dt_half, "2-byte floating point"),     // dt_half
 });
+
+static AutoRegister _reg_dtype_flags(dtype_flags);
 
 /*
 const optype_t
@@ -162,6 +167,8 @@ constexpr auto optype_flags = std::to_array({
 */                                         // condition is stored in 'value' field
 });
 
+static AutoRegister _reg_optype_flags(optype_flags);
+
 
 /*
 #define INSN_MACRO  0x01        ///< macro instruction
@@ -174,3 +181,71 @@ auto insn_flags = std::to_array({
     TO_ENUM(INSN_MODMAC, "may modify the database to make room for the macro insn"),
     TO_ENUM(INSN_64BIT, "belongs to 64bit segment?"),
 });
+
+static AutoRegister _reg_insn_flags(insn_flags);
+
+auto ff_flags = std::to_array({
+    TO_ENUM(FF_CODE, "Code"),
+    TO_ENUM(FF_DATA, "Data"),
+    TO_ENUM(FF_TAIL, "Tail"),
+    TO_ENUM(FF_UNK, "Unknown"),
+    TO_ENUM(MS_CLS, "Mask for typing"),
+
+    TO_ENUM(FF_COMM, "has comment?"),
+    TO_ENUM(FF_REF, "has references"),
+    TO_ENUM(FF_LINE, "has next or prev lines?"),
+    TO_ENUM(FF_NAME, "has name?"),
+    TO_ENUM(FF_LABL, "has dummy name?"),
+    TO_ENUM(FF_FLOW, "Exec flow from prev instruction"),
+    TO_ENUM(FF_SIGN, "Inverted sign of operands"),
+    TO_ENUM(FF_BNOT, "Bitwise negation of operands"),
+    TO_ENUM(FF_UNUSED, "unused bit"),
+    {0x40000000, "FF_IMMD", "Has Immediate value?"},
+    {0x80000000, "FF_JUMP", "Has jump table or switch_info?"},
+    {0x10000000, "FF_FUNC", "function start?"},
+    {0x00000100, "FF_IVL", "Byte has a value"},
+    {0x00000600, "MS_CLS", "Mask for typing"},
+    // MS_VAL
+    {0x000000FF, "MS_VAL", "Mask for value"},
+});
+
+static AutoRegister _reg_ff_flags(ff_flags);
+
+auto ff_optype_flags = std::to_array({
+    TO_ENUM(FF_N_VOID, "Void (unknown)"),
+    TO_ENUM(FF_N_NUMH, "Hexadecimal number"),
+    TO_ENUM(FF_N_NUMD, "Decimal number"),
+    TO_ENUM(FF_N_CHAR, "Char ('x')"),
+    TO_ENUM(FF_N_SEG, "Segment"),
+    TO_ENUM(FF_N_OFF, "Offset"),
+    TO_ENUM(FF_N_NUMB, "Binary number"),
+    TO_ENUM(FF_N_NUMO, "Octal number"),
+    TO_ENUM(FF_N_ENUM, "Enumeration"),
+    TO_ENUM(FF_N_FOP, "Forced operand"),
+    TO_ENUM(FF_N_STRO, "Struct offset"),
+    TO_ENUM(FF_N_STK, "Stack variable"),
+    TO_ENUM(FF_N_FLT, "Floating point number"),
+    TO_ENUM(FF_N_CUST, "Custom representation"),
+});
+
+static AutoRegister _reg_ff_optype_flags(ff_optype_flags);
+
+auto ff_dtype_flags = std::to_array({
+    TO_ENUM(FF_BYTE, "byte"),
+    TO_ENUM(FF_WORD, "word"),
+    TO_ENUM(FF_DWORD, "double word"),
+    TO_ENUM(FF_QWORD, "quadro word"),
+    TO_ENUM(FF_TBYTE, "tbyte"),
+    TO_ENUM(FF_STRLIT, "string literal"),
+    TO_ENUM(FF_STRUCT, "struct variable"),
+    TO_ENUM(FF_OWORD, "octaword/xmm word (16 bytes/128 bits)"),
+    TO_ENUM(FF_FLOAT, "float"),
+    TO_ENUM(FF_DOUBLE, "double"),
+    TO_ENUM(FF_PACKREAL, "packed decimal real"),
+    TO_ENUM(FF_ALIGN, "alignment directive"),
+    TO_ENUM(FF_CUSTOM, "custom data type"),
+    TO_ENUM(FF_YWORD, "ymm word (32 bytes/256 bits)"),
+    TO_ENUM(FF_ZWORD, "zmm word (64 bytes/512 bits)"),
+});
+
+static AutoRegister _reg_ff_dtype_flags(ff_dtype_flags);

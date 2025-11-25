@@ -9,6 +9,16 @@
 #include "architectures/instructions_PLFM_RISCV.hpp"
 #include "architectures/instructions_PLFM_ARC.hpp"
 #include "architectures/instructions_PLFM_PPC.hpp"
+#include "architectures/instructions_PLFM_68K.hpp"
+#include "architectures/instructions_PLFM_8051.hpp"
+#include "architectures/instructions_PLFM_AVR.hpp"
+#include "architectures/instructions_PLFM_Z80.hpp"
+#include "architectures/instructions_PLFM_PIC.hpp"
+#include "architectures/instructions_PLFM_SPARC.hpp"
+#include "architectures/instructions_PLFM_SH.hpp"
+#include "architectures/instructions_PLFM_IA64.hpp"
+#include "architectures/instructions_PLFM_ALPHA.hpp"
+#include "architectures/instructions_PLFM_HPPA.hpp"
 
 #include <map>
 #include <string>
@@ -20,7 +30,30 @@ const std::map<int, const flags_vector_t &> instructions_map = {
     {PLFM_RISCV, instructions_PLFM_RISCV},
     {PLFM_ARC, instructions_PLFM_ARC},
     {PLFM_PPC, instructions_PLFM_PPC},
+    {PLFM_68K, instructions_PLFM_68K},
+    {PLFM_8051, instructions_PLFM_8051},
+    {PLFM_AVR, instructions_PLFM_AVR},
+    {PLFM_Z80, instructions_PLFM_Z80},
+    {PLFM_PIC, instructions_PLFM_PIC},
+    {PLFM_SPARC, instructions_PLFM_SPARC},
+    {PLFM_SH, instructions_PLFM_SH},
+    {PLFM_IA64, instructions_PLFM_IA64},
+    {PLFM_ALPHA, instructions_PLFM_ALPHA},
+    {PLFM_HPPA, instructions_PLFM_HPPA},
 };
+
+struct AutoRegisterMap
+{
+  AutoRegisterMap(const std::map<int, const flags_vector_t &> &map)
+  {
+    for (const auto &pair : map)
+    {
+      FlagRegistry::get().register_array(pair.second);
+    }
+  }
+};
+
+static AutoRegisterMap _reg_instructions(instructions_map);
 
 /*
 //-------------------------------------------------------------------------
