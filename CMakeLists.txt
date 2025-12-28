@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 project(decode_instruction)
 
 set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-Wnullability-completeness"
@@ -18,6 +20,8 @@ endif()
 
 if (MSVC)
   string(APPEND CMAKE_CXX_FLAGS " /O2")
+  add_compile_definitions(_HAS_CXX23=1)
+  add_compile_options(/Zc:__cplusplus)
 endif (MSVC)
 
 CHECK_CXX_COMPILER_FLAG("-O3" COMPILER_SUPPORTS_MARCH_NATIVE)
