@@ -1,0 +1,12 @@
+{
+  "IDAMetadataDescriptorVersion": 1,
+  "plugin": { 
+    "name": "decode_instruction plugin",
+    "entryPoint": "decode_instruction",
+    "categories": ["disassembly-and-processor-modules", "ui-ux-and-visualization"],
+    "logoPath": "logo.png",
+    "idaVersions": ">=8.4",
+    "description" : "The decode_instruction plugin is an IDA Pro plugin that provides information about current instruction.",
+    "version": "1.0.0"
+  }
+}
