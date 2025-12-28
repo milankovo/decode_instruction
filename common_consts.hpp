@@ -18,13 +18,14 @@
 #define OF_SHOW         0x08  ///< should the operand be displayed?
  */
 
-auto operand_flags = std::to_array({
+constexpr expanded_flag_t operand_flags_raw[] = {
     TO_ENUM(OF_NO_BASE_DISP, "base displacement doesn't exist"),         // OF_NO_BASE_DISP
     TO_ENUM(OF_OUTER_DISP, "outer displacement exists"),                 // OF_OUTER_DISP
     TO_ENUM(PACK_FORM_DEF, "packed factor defined"),                     // PACK_FORM_DEF
     TO_ENUM(OF_NUMBER, "the operand can be converted to a number only"), // OF_NUMBER
     TO_ENUM(OF_SHOW, "should the operand be displayed?")                 // OF_SHOW
-});
+};
+constexpr auto operand_flags = std::to_array(operand_flags_raw);
 
 static AutoRegister _reg_operand_flags(operand_flags);
 
@@ -51,7 +52,7 @@ static AutoRegister _reg_operand_flags(operand_flags);
 #define dt_half         18    ///< 2-byte floating point
 */
 
-auto dtype_flags = std::to_array({
+constexpr expanded_flag_t dtype_flags_raw[] = {
     TO_ENUM(dt_byte, "8 bit integer"),     // dt_byte
     TO_ENUM(dt_word, "16 bit integer"),     // dt_word
     TO_ENUM(dt_dword, "32 bit integer"),    // dt_dword
@@ -71,7 +72,8 @@ auto dtype_flags = std::to_array({
     TO_ENUM(dt_byte32, "256 bit integer"),   // dt_byte32
     TO_ENUM(dt_byte64, "512 bit integer"),   // dt_byte64
     TO_ENUM(dt_half, "2-byte floating point"),     // dt_half
-});
+};
+constexpr auto dtype_flags = std::to_array(dtype_flags_raw);
 
 static AutoRegister _reg_dtype_flags(dtype_flags);
 
@@ -143,7 +145,7 @@ o_dcr  =         ida_ua.o_idpspec5      # Device control register
 */
 
 // TODO: figure out how to specialize it for other processor types
-constexpr auto optype_flags = std::to_array({
+constexpr expanded_flag_t optype_flags_raw[] = {
     TO_ENUM(o_void, "No Operand"),
     TO_ENUM(o_reg, "General Register (al,ax,es,ds...)"),
     TO_ENUM(o_mem, "Direct Memory Reference"),
@@ -165,7 +167,8 @@ constexpr auto optype_flags = std::to_array({
                                            // up to 16 bytes (with terminating zero)
     #define o_cond        o_idpspec5+1         // ARM condition as an operand
 */                                         // condition is stored in 'value' field
-});
+};
+constexpr auto optype_flags = std::to_array(optype_flags_raw);
 
 static AutoRegister _reg_optype_flags(optype_flags);
 
@@ -176,15 +179,16 @@ static AutoRegister _reg_optype_flags(optype_flags);
 #define INSN_64BIT  0x04        ///< belongs to 64bit segment?
 */
 
-auto insn_flags = std::to_array({
+constexpr expanded_flag_t insn_flags_raw[] = {
     TO_ENUM(INSN_MACRO, "macro instruction"),
     TO_ENUM(INSN_MODMAC, "may modify the database to make room for the macro insn"),
     TO_ENUM(INSN_64BIT, "belongs to 64bit segment?"),
-});
+};
+constexpr auto insn_flags = std::to_array(insn_flags_raw);
 
 static AutoRegister _reg_insn_flags(insn_flags);
 
-auto ff_flags = std::to_array({
+constexpr expanded_flag_t ff_flags_raw[] = {
     TO_ENUM(FF_CODE, "Code"),
     TO_ENUM(FF_DATA, "Data"),
     TO_ENUM(FF_TAIL, "Tail"),
@@ -207,11 +211,12 @@ auto ff_flags = std::to_array({
     {0x00000600, "MS_CLS", "Mask for typing"},
     // MS_VAL
     {0x000000FF, "MS_VAL", "Mask for value"},
-});
+};
+constexpr auto ff_flags = std::to_array(ff_flags_raw);
 
 static AutoRegister _reg_ff_flags(ff_flags);
 
-auto ff_optype_flags = std::to_array({
+constexpr expanded_flag_t ff_optype_flags_raw[] = {
     TO_ENUM(FF_N_VOID, "Void (unknown)"),
     TO_ENUM(FF_N_NUMH, "Hexadecimal number"),
     TO_ENUM(FF_N_NUMD, "Decimal number"),
@@ -226,11 +231,12 @@ auto ff_optype_flags = std::to_array({
     TO_ENUM(FF_N_STK, "Stack variable"),
     TO_ENUM(FF_N_FLT, "Floating point number"),
     TO_ENUM(FF_N_CUST, "Custom representation"),
-});
+};
+constexpr auto ff_optype_flags = std::to_array(ff_optype_flags_raw);
 
 static AutoRegister _reg_ff_optype_flags(ff_optype_flags);
 
-auto ff_dtype_flags = std::to_array({
+constexpr expanded_flag_t ff_dtype_flags_raw[] = {
     TO_ENUM(FF_BYTE, "byte"),
     TO_ENUM(FF_WORD, "word"),
     TO_ENUM(FF_DWORD, "double word"),
@@ -246,6 +252,7 @@ auto ff_dtype_flags = std::to_array({
     TO_ENUM(FF_CUSTOM, "custom data type"),
     TO_ENUM(FF_YWORD, "ymm word (32 bytes/256 bits)"),
     TO_ENUM(FF_ZWORD, "zmm word (64 bytes/512 bits)"),
-});
+};
+constexpr auto ff_dtype_flags = std::to_array(ff_dtype_flags_raw);
 
 static AutoRegister _reg_ff_dtype_flags(ff_dtype_flags);

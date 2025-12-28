@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "enums.hpp"
 
 namespace arm
@@ -42,34 +43,36 @@ namespace arm
 
     };
 
-    constexpr auto auxpref_flags = std::to_array(
-        {TO_ENUM(aux_sw, "signed word (SW postfix)"),
-         TO_ENUM(aux_x, "doubleword (X postfix in A64)"),
-         TO_ENUM(aux_cond, "set condition codes (S postfix is required)"),
-         TO_ENUM(aux_byte, "byte transfer (B postfix is required)"),
-         TO_ENUM(aux_npriv, "non-privileged transfer (T postfix is required)"),
-         TO_ENUM(aux_regsh, "shift count is held in a register (see o_shreg)"),
-         TO_ENUM(aux_negoff, "memory offset is negated in LDR,STR"),
-         TO_ENUM(aux_immcarry, "carry flag is set to bit 31 of the immediate operand (see may_set_carry)"),
-         TO_ENUM(aux_wback, "write back (! postfix is required)"),
-         TO_ENUM(aux_wbackldm, "write back for LDM/STM (! postfix is required)"),
-         TO_ENUM(aux_postidx, "post-indexed mode in LDR,STR"),
-         TO_ENUM(aux_ltrans, "long transfer in LDC/STC (L postfix is required)"),
-         TO_ENUM(aux_wimm, "thumb32 wide encoding of immediate constant (MOVW)"),
-         TO_ENUM(aux_sb, "signed byte (SB postfix)"),
-         TO_ENUM(aux_sh, "signed halfword (SH postfix)"),
-         TO_ENUM(aux_h, "halfword (H postfix)"),
-         TO_ENUM(aux_d, "dual (D postfix in A32/T32)"),
-         TO_ENUM(aux_p, "privileged (P postfix)"),
-         TO_ENUM(aux_coproc, "coprocessor instruction"),
-         TO_ENUM(aux_wide, "wide (32-bit) thumb instruction (.W suffix)"),
-         TO_ENUM(aux_pac, "Pointer Authentication Code instruction (see PAC_ flags)"),
-         TO_ENUM(aux_ns, "non-secure branch (NS suffix)"),
-         TO_ENUM(aux_thumb32, "(aux_wide is sometimes turned off for pretty-printing)"),
-         TO_ENUM(aux_vpt_mask, "(MVE) we cannot use INSNPREF for the mask of a VFP insn because"),
-         TO_ENUM(aux_vpt_pred, "(MVE) also we use these bits to store the predicate of the"),
-         TO_ENUM(aux_vpt_then, "(MVE) the insn is in the THEN section of a VPT predication block"),
-         TO_ENUM(aux_vpt_else, "(MVE) the insn is in the ELSE section of a VPT predication block")});
+    constexpr expanded_flag_t auxpref_flags_raw[] = {
+        TO_ENUM(aux_sw, "signed word (SW postfix)"),
+        TO_ENUM(aux_x, "doubleword (X postfix in A64)"),
+        TO_ENUM(aux_cond, "set condition codes (S postfix is required)"),
+        TO_ENUM(aux_byte, "byte transfer (B postfix is required)"),
+        TO_ENUM(aux_npriv, "non-privileged transfer (T postfix is required)"),
+        TO_ENUM(aux_regsh, "shift count is held in a register (see o_shreg)"),
+        TO_ENUM(aux_negoff, "memory offset is negated in LDR,STR"),
+        TO_ENUM(aux_immcarry, "carry flag is set to bit 31 of the immediate operand (see may_set_carry)"),
+        TO_ENUM(aux_wback, "write back (! postfix is required)"),
+        TO_ENUM(aux_wbackldm, "write back for LDM/STM (! postfix is required)"),
+        TO_ENUM(aux_postidx, "post-indexed mode in LDR,STR"),
+        TO_ENUM(aux_ltrans, "long transfer in LDC/STC (L postfix is required)"),
+        TO_ENUM(aux_wimm, "thumb32 wide encoding of immediate constant (MOVW)"),
+        TO_ENUM(aux_sb, "signed byte (SB postfix)"),
+        TO_ENUM(aux_sh, "signed halfword (SH postfix)"),
+        TO_ENUM(aux_h, "halfword (H postfix)"),
+        TO_ENUM(aux_d, "dual (D postfix in A32/T32)"),
+        TO_ENUM(aux_p, "privileged (P postfix)"),
+        TO_ENUM(aux_coproc, "coprocessor instruction"),
+        TO_ENUM(aux_wide, "wide (32-bit) thumb instruction (.W suffix)"),
+        TO_ENUM(aux_pac, "Pointer Authentication Code instruction (see PAC_ flags)"),
+        TO_ENUM(aux_ns, "non-secure branch (NS suffix)"),
+        TO_ENUM(aux_thumb32, "(aux_wide is sometimes turned off for pretty-printing)"),
+        TO_ENUM(aux_vpt_mask, "(MVE) we cannot use INSNPREF for the mask of a VFP insn because"),
+        TO_ENUM(aux_vpt_pred, "(MVE) also we use these bits to store the predicate of the"),
+        TO_ENUM(aux_vpt_then, "(MVE) the insn is in the THEN section of a VPT predication block"),
+        TO_ENUM(aux_vpt_else, "(MVE) the insn is in the ELSE section of a VPT predication block")
+    };
+    constexpr auto auxpref_flags = std::to_array(auxpref_flags_raw);
 
     static AutoRegister _reg_auxpref_flags(auxpref_flags);
 
@@ -287,8 +290,7 @@ namespace arm
         ARM_MAXREG, // must be the last entry
     };
 
-    constexpr auto registers = std::to_array(
-        {
+    constexpr expanded_flag_t registers_raw[] = {
             TO_ENUM(R0, "R0"),
             TO_ENUM(R1, "R1"),
             TO_ENUM(R2, "R2"),
@@ -506,9 +508,10 @@ namespace arm
             TO_ENUM(V28, "V28"),
             TO_ENUM(V29, "V29"),
             TO_ENUM(V30, "V30"),
-            TO_ENUM(V31, "V31"),
-            TO_ENUM(ARM_MAXREG, "ARM_MAXREG"),
-        });
+                TO_ENUM(V31, "V31"),
+                TO_ENUM(ARM_MAXREG, "ARM_MAXREG"),
+            };
+            constexpr auto registers = std::to_array(registers_raw);
 
     static AutoRegister _reg_registers(registers);
 

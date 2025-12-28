@@ -1,6 +1,7 @@
 #pragma once
 
 #include "enums.hpp"
+#include <array>
 /*
 #define aux_lock        0x00000001
 #define aux_rep         0x00000002
@@ -27,8 +28,8 @@
 namespace intel
 {
 
-    auto auxpref_flags = std::to_array(
-        {TO_ENUM(aux_lock, "Lock"),
+    constexpr expanded_flag_t auxpref_flags_raw[] = {
+        TO_ENUM(aux_lock, "Lock"),
          TO_ENUM(aux_rep, "Repeat"),
          TO_ENUM(aux_repne, "Repeat Not Equal"),
          TO_ENUM(aux_use32, "segment type is 32-bits"),
@@ -47,12 +48,13 @@ namespace intel
          TO_ENUM(aux_evex, "EVEX-encoded instruction"),
          TO_ENUM(aux_xop, "XOP-encoded instruction"),
          TO_ENUM(aux_xacquire, "HLE prefix hints"),
-         TO_ENUM(aux_xrelease, "HLE prefix hints")});
+         TO_ENUM(aux_xrelease, "HLE prefix hints")
+    };
+    constexpr auto auxpref_flags = std::to_array(auxpref_flags_raw);
 
     static AutoRegister _reg_auxpref_flags(auxpref_flags);
 
-    auto registers = std::to_array(
-        {
+    constexpr expanded_flag_t registers_raw[] = {
             TO_ENUM(R_none, "No register"),
             TO_ENUM(R_ax, "AX"),
             TO_ENUM(R_cx, "CX"),
@@ -186,9 +188,7 @@ namespace intel
             TO_ENUM(R_xmm28, "XMM28"),
             TO_ENUM(R_xmm29, "XMM29"),
             TO_ENUM(R_xmm30, "XMM30"),
-            TO_ENUM(R_xmm31, "XMM31"),
-
-            TO_ENUM(R_ymm16, "YMM16"), // AVX-512 extended YMM registers
+                TO_ENUM(R_zmm31, "ZMM31"),
             TO_ENUM(R_ymm17, "YMM17"),
             TO_ENUM(R_ymm18, "YMM18"),
             TO_ENUM(R_ymm19, "YMM19"),
@@ -247,7 +247,8 @@ namespace intel
             TO_ENUM(R_k6, "K6"),
             TO_ENUM(R_k7, "K7"),
 
-            TO_ENUM(R_last, "LAST"),
-        });
+                TO_ENUM(R_last, "LAST"),
+            };
+            constexpr auto registers = std::to_array(registers_raw);
     static AutoRegister _reg_registers(registers);
 }
