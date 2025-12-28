@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <array>
 
 #define TO_ENUM(X, comment) expanded_flag_t{X, #X, comment}
 
@@ -11,6 +12,11 @@ struct expanded_flag_t
   const char *name;
   const char *comment;
 };
+
+template <class T, class... Ts>
+constexpr auto make_array(T first, Ts... rest) {
+  return std::array<T, 1 + sizeof...(rest)>{first, rest...};
+}
 
 class FlagRegistry
 {

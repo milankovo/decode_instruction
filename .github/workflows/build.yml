@@ -80,6 +80,21 @@ jobs:
           git checkout 9074c694f3b2f88c1933d502111b458c29591824
           cd ../..
 
+      - name: Patch IDA SDK for macOS (is_pod -> is_trivially_copyable)
+        if: matrix.os.name == 'macos'
+        shell: bash
+        run: |
+          set -euo pipefail
+          FILE="./ida-sdk/include/pro.h"
+          if [[ -f "$FILE" ]]; then
+            # Use BSD sed with in-place edit on macOS
+            sed -i '' -e 's/std::is_pod<T>::value/std::is_trivially_copyable<T>::value/g' "$FILE"
+            echo "Patched $FILE"
+          else
+            echo "pro.h not found at $FILE" >&2
+            exit 1
+          fi
+
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:

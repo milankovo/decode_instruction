@@ -43,7 +43,8 @@ namespace arm
 
     };
 
-    constexpr expanded_flag_t auxpref_flags_raw[] = {
+    // Use make_array to avoid manual sizing and MSVC initializer_list issues
+    constexpr auto auxpref_flags = make_array(
         TO_ENUM(aux_sw, "signed word (SW postfix)"),
         TO_ENUM(aux_x, "doubleword (X postfix in A64)"),
         TO_ENUM(aux_cond, "set condition codes (S postfix is required)"),
@@ -71,8 +72,7 @@ namespace arm
         TO_ENUM(aux_vpt_pred, "(MVE) also we use these bits to store the predicate of the"),
         TO_ENUM(aux_vpt_then, "(MVE) the insn is in the THEN section of a VPT predication block"),
         TO_ENUM(aux_vpt_else, "(MVE) the insn is in the ELSE section of a VPT predication block")
-    };
-    constexpr auto auxpref_flags = std::to_array(auxpref_flags_raw);
+    );
 
     static AutoRegister _reg_auxpref_flags(auxpref_flags);
 
@@ -290,7 +290,7 @@ namespace arm
         ARM_MAXREG, // must be the last entry
     };
 
-    constexpr expanded_flag_t registers_raw[] = {
+    constexpr auto registers = make_array(
             TO_ENUM(R0, "R0"),
             TO_ENUM(R1, "R1"),
             TO_ENUM(R2, "R2"),
@@ -509,9 +509,8 @@ namespace arm
             TO_ENUM(V29, "V29"),
             TO_ENUM(V30, "V30"),
                 TO_ENUM(V31, "V31"),
-                TO_ENUM(ARM_MAXREG, "ARM_MAXREG"),
-            };
-            constexpr auto registers = std::to_array(registers_raw);
+                TO_ENUM(ARM_MAXREG, "ARM_MAXREG")
+            );
 
     static AutoRegister _reg_registers(registers);
 

@@ -28,7 +28,7 @@
 namespace intel
 {
 
-    constexpr expanded_flag_t auxpref_flags_raw[] = {
+    constexpr auto auxpref_flags = make_array(
         TO_ENUM(aux_lock, "Lock"),
          TO_ENUM(aux_rep, "Repeat"),
          TO_ENUM(aux_repne, "Repeat Not Equal"),
@@ -49,12 +49,11 @@ namespace intel
          TO_ENUM(aux_xop, "XOP-encoded instruction"),
          TO_ENUM(aux_xacquire, "HLE prefix hints"),
          TO_ENUM(aux_xrelease, "HLE prefix hints")
-    };
-    constexpr auto auxpref_flags = std::to_array(auxpref_flags_raw);
+    );
 
     static AutoRegister _reg_auxpref_flags(auxpref_flags);
 
-    constexpr expanded_flag_t registers_raw[] = {
+    constexpr auto registers = make_array(
             TO_ENUM(R_none, "No register"),
             TO_ENUM(R_ax, "AX"),
             TO_ENUM(R_cx, "CX"),
@@ -247,8 +246,7 @@ namespace intel
             TO_ENUM(R_k6, "K6"),
             TO_ENUM(R_k7, "K7"),
 
-                TO_ENUM(R_last, "LAST"),
-            };
-            constexpr auto registers = std::to_array(registers_raw);
+                TO_ENUM(R_last, "LAST")
+            );
     static AutoRegister _reg_registers(registers);
 }
