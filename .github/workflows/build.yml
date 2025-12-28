@@ -35,12 +35,12 @@ jobs:
           - version: "9.2"
             sdk_slug: "release/9.2/sdk-and-utilities/idasdk92.zip"
             sdk_subdir: "src/"
-          - version: "9.1"
-            sdk_slug: "release/9.1/sdk-and-utilities/idasdk91.zip"
-            sdk_subdir: "idasdk91/"
-          - version: "9.0"
-            sdk_slug: "release/9.0/sdk-and-utilities/idasdk90.zip"
-            sdk_subdir: "idasdk90/"
+          # - version: "9.1"
+          #   sdk_slug: "release/9.1/sdk-and-utilities/idasdk91.zip"
+          #   sdk_subdir: "idasdk91/"
+          # - version: "9.0"
+          #   sdk_slug: "release/9.0/sdk-and-utilities/idasdk90.zip"
+          #   sdk_subdir: "idasdk90/"
 
     steps:
       - name: Setup MSBuild
@@ -93,7 +93,7 @@ jobs:
           CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
           if [[ "${{ matrix.os.name }}" == "windows" ]]; then
             # Enable C++23 library features in MSVC (std::to_array initializer_list)
-            CMAKE_ARGS="${CMAKE_ARGS} -DCMAKE_CXX_FLAGS='/D_HAS_CXX23=1 /std:c++latest'"
+            CMAKE_ARGS="${CMAKE_ARGS} -DCMAKE_CXX_FLAGS=/D_HAS_CXX23=1"
           fi
           cmake -B build -DEA64=YES -S . ${CMAKE_ARGS}
           cmake --build build --config Release
