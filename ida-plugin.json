@@ -10,8 +10,7 @@
       "disassembly-and-processor-modules",
       "ui-ux-and-visualization"
     ],
-    "logoPath": "logo.png",
-    "idaVersions": ">=8.4",
+    "idaVersions": ">=9.2",
     "description": "The decode_instruction plugin is an IDA Pro plugin that provides information about current instruction.",
     "version": "1.0.0",
     "authors": [
