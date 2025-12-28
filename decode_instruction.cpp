@@ -858,8 +858,8 @@ void plugin_ctx_t::refresh_view()
       dump_operand(insn.ops[i], lines);
     }
     eavec_t args;
-    get_arg_addrs(&args, ea);
-    if (!args.empty())
+    auto success = get_arg_addrs(&args, ea);
+    if (success && !args.empty())
     {
 
       lines.push_back(simpleline_t("")); // empty line
