@@ -90,9 +90,12 @@ jobs:
         env:
           IDASDK: ${{ github.workspace }}/ida-sdk
         run: |
-          cmake -B build -DEA64=YES -S . \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+          CMAKE_ARGS="-DCMAKE_BUILD_TYPE=Release -DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+          if [[ "${{ matrix.os.name }}" == "windows" ]]; then
+            # Enable C++23 library features in MSVC (std::to_array initializer_list)
+            CMAKE_ARGS="${CMAKE_ARGS} -DCMAKE_CXX_FLAGS='/D_HAS_CXX23=1 /std:c++latest'"
+          fi
+          cmake -B build -DEA64=YES -S . ${CMAKE_ARGS}
           cmake --build build --config Release
 
       - name: Collect artifacts
