@@ -1,0 +1,148 @@
+name: build
+
+on:
+  push:
+    branches: [main, ida-plugin-json, hr-test-release]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [main]
+
+permissions: read-all
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    permissions:
+      # for upload to release
+      contents: write
+    name: IDA ${{ matrix.ida.version }} on ${{ matrix.os.name }}
+    runs-on: ${{ matrix.os.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - runner: ubuntu-latest
+            name: linux
+          - runner: windows-latest
+            name: windows
+          - runner: macos-latest
+            name: macos
+        ida:
+          - version: "9.2"
+            sdk_slug: "release/9.2/sdk-and-utilities/idasdk92.zip"
+            sdk_subdir: "src/"
+          - version: "9.1"
+            sdk_slug: "release/9.1/sdk-and-utilities/idasdk91.zip"
+            sdk_subdir: "idasdk91/"
+          - version: "9.0"
+            sdk_slug: "release/9.0/sdk-and-utilities/idasdk90.zip"
+            sdk_subdir: "idasdk90/"
+
+    steps:
+      - name: Setup MSBuild
+        if: matrix.os.name == 'windows'
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Setup Visual Studio 2022
+        if: matrix.os.name == 'windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          vsversion: 2022
+
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          submodules: "recursive"
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Download IDA SDK ${{ matrix.ida.version }}
+        shell: bash
+        run: |
+          uvx --from ida-hcli hcli --disable-updates download ${{ matrix.ida.sdk_slug }}
+          unzip -q idasdk*.zip -d ./ida-temp/
+          mv ./ida-temp/${{ matrix.ida.sdk_subdir }} ./ida-sdk
+        env:
+          HCLI_API_KEY: ${{ secrets.HCLI_API_KEY }}
+
+      - name: Fetch ida-cmake
+        shell: bash
+        run: |
+          git clone https://github.com/allthingsida/ida-cmake.git ./ida-sdk/ida-cmake
+          cd ./ida-sdk/ida-cmake
+          # ida-cmake prior to modernization after 9.2
+          git checkout 9074c694f3b2f88c1933d502111b458c29591824
+          cd ../..
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.28.x'
+
+      - name: Build
+        shell: bash
+        env:
+          IDASDK: ${{ github.workspace }}/ida-sdk
+        run: |
+          cmake -B build -DEA64=YES -S . \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+          cmake --build build --config Release
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cp -v ./ida-sdk/bin/plugins/decode_instruction* artifacts/
+          jq '.plugin.idaVersions = "==${{ matrix.ida.version }}"' ida-plugin.json > artifacts/ida-plugin.json
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: decode_instruction-ida${{ matrix.ida.version }}-${{ matrix.os.name }}
+          path: artifacts/*
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: release for IDA ${{ matrix.ida.version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ida:
+          - version: "9.2"
+          - version: "9.1"
+          - version: "9.0"
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: decode_instruction-ida${{ matrix.ida.version }}-*
+          merge-multiple: true
+
+      - name: Create archive
+        shell: bash
+        run: |
+          cd artifacts
+          zip -r ../decode_instruction-ida${{ matrix.ida.version }}.zip *
+          cd ..
+          mv decode_instruction-ida${{ matrix.ida.version }}.zip artifacts/
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*.zip
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
