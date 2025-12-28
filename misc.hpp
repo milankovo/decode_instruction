@@ -1,3 +1,4 @@
+#pragma once
 // from https://www.reddit.com/r/cpp/comments/16r8k9j/enumeratelike_semantics_in_c/
 #include <tuple>
 

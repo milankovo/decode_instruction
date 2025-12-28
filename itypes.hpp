@@ -1,6 +1,5 @@
 #pragma once
 #include <pro.h>
-#include <allins.hpp>
 #include "enums.hpp"
 
 #include "architectures/instructions_PLFM_386.hpp"
