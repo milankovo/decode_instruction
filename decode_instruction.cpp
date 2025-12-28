@@ -16,6 +16,7 @@
 #include "intel_consts.hpp"
 #include "arm_consts.hpp"
 #include "itypes.hpp"
+#include "misc.hpp"
 
 #define REFRESH_ACTION_NAME "decode_instruction:Refresh"
 
@@ -144,8 +145,8 @@ void dump_operand(const op_t &op, strvec_t &lines)
     add_line(lines, "value", op.value);
   if (op.flags != 0)
     add_line(lines, "flags", explain_bits(op.flags, operand_flags));
-  //if (op.dtype != 0)
-    add_line(lines, "dtype", explain_enum(op.dtype, dtype_flags));
+  // if (op.dtype != 0)
+  add_line(lines, "dtype", explain_enum(op.dtype, dtype_flags));
 
   if (op.type == o_reg)
   {
@@ -413,19 +414,26 @@ class FlagsDissector
 
   static int get_shift(uint64 mask)
   {
-    if (mask == 0) return 0;
+    if (mask == 0)
+      return 0;
     int shift = 0;
-    while (!((mask >> shift) & 1)) shift++;
+    while (!((mask >> shift) & 1))
+      shift++;
     return shift;
   }
 
   static int get_bitlen(uint64 mask)
   {
-    if (mask == 0) return 0;
+    if (mask == 0)
+      return 0;
     int shift = get_shift(mask);
     uint64 shifted = mask >> shift;
     int len = 0;
-    while (shifted & 1) { len++; shifted >>= 1; }
+    while (shifted & 1)
+    {
+      len++;
+      shifted >>= 1;
+    }
     return len;
   }
 
@@ -444,11 +452,11 @@ class FlagsDissector
       if (bitlen == 1)
       {
         if (raw == 0 && !fd.always_show)
-          return; 
+          return;
         if (raw == 0 && fd.always_show)
           valtxt.sprnt("0");
         else
-          valtxt.clear(); 
+          valtxt.clear();
       }
       else
         valtxt.sprnt("0x%llX", raw);
@@ -458,15 +466,15 @@ class FlagsDissector
       line.sprnt("%s", fd.label);
     else
       line.sprnt("%s=%s", fd.label, valtxt.c_str());
-    
-    int order_bit = shift; 
+
+    int order_bit = shift;
     int display_bit;
     if (strcmp(fd.label, "byte") == 0)
-      display_bit = shift + bitlen - 1; 
+      display_bit = shift + bitlen - 1;
     else if (bitlen > 1 && fd.translator != nullptr)
-      display_bit = shift + bitlen - 1; 
+      display_bit = shift + bitlen - 1;
     else
-      display_bit = shift; 
+      display_bit = shift;
     out_lines.push_back({fd.group, line, fd.group, order_bit, display_bit, -1, fd.color, shift, bitlen});
   }
 
@@ -485,7 +493,8 @@ public:
 private:
   void collect_fields()
   {
-    auto op_mask = [](int idx) -> uint64 { return 0xFULL << get_operand_type_shift(idx); };
+    auto op_mask = [](int idx) -> uint64
+    { return 0xFULL << get_operand_type_shift(idx); };
 
     field_descriptor base_fields[] = {
         {"unused", 0xFF00000000000000ULL, G_U2, nullptr, false, COLOR_DEFAULT},
@@ -514,16 +523,22 @@ private:
 
     for (auto &f : base_fields)
     {
-      uint64 cls_bits = (flags & 0x00000600ULL);    
-      bool is_data_cls = cls_bits == 0x00000400ULL; 
+      uint64 cls_bits = (flags & 0x00000600ULL);
+      bool is_data_cls = cls_bits == 0x00000400ULL;
       if (strcmp(f.label, "dtype") == 0 && !is_data_cls)
-        continue; 
+        continue;
       if (strcmp(f.label, "byte") == 0 && (flags & 0x00000100ULL) == 0)
-        continue; 
+        continue;
       add_field_line(f);
     }
 
-    struct bit_name { uint32 bit; const char *nm; group_idx grp; uchar color; };
+    struct bit_name
+    {
+      uint32 bit;
+      const char *nm;
+      group_idx grp;
+      uchar color;
+    };
     const bit_name code_bits[] = {
         {0x10000000, "FF_FUNC" COMMENT(" // function start?"), G_DTYPE, COLOR_IMPNAME},
         {0x40000000, "FF_IMMD" COMMENT(" // Has Immediate value?"), G_DTYPE, COLOR_MACRO},
@@ -538,9 +553,14 @@ private:
           int bitpos = -1;
           for (int b = 0; b < 64; ++b)
           {
-            if ((uint64)cb.bit & (1ULL << b)) { bitpos = b; break; }
+            if ((uint64)cb.bit & (1ULL << b))
+            {
+              bitpos = b;
+              break;
+            }
           }
-          if (bitpos < 0) bitpos = 0;
+          if (bitpos < 0)
+            bitpos = 0;
           out_lines.push_back({cb.grp, qstring().sprnt("%s", cb.nm), cb.grp, bitpos, bitpos, -1, cb.color, bitpos, 1});
         }
     }
@@ -560,7 +580,8 @@ private:
         group_has_line[rlchk.group] = true;
 
     static const int group_bit_index[G_COUNT] = {60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0};
-    auto group_all_zero = [&](int gi) -> bool {
+    auto group_all_zero = [&](int gi) -> bool
+    {
       uint64 nib = (flags >> group_bit_index[gi]) & 0xFULL;
       return nib == 0ULL;
     };
@@ -581,8 +602,12 @@ private:
     int col = 0;
     for (int gi = first_group; gi < G_COUNT; ++gi)
     {
-      if (gi != first_group) { header += ' '; col += 1; }
-      group_cols.push_back(col); 
+      if (gi != first_group)
+      {
+        header += ' ';
+        col += 1;
+      }
+      group_cols.push_back(col);
       header += groups[gi];
       col += (int)strlen(groups[gi]);
     }
@@ -596,7 +621,8 @@ private:
     qstring bit_line;
     for (int gi = first_group; gi < G_COUNT; ++gi)
     {
-      if (gi != first_group) bit_line += ' ';
+      if (gi != first_group)
+        bit_line += ' ';
       uint64 nib = (flags >> group_bit_index[gi]) & 0xFULL;
       for (int b = 3; b >= 0; --b)
         bit_line += ((nib >> b) & 1) ? '1' : '0';
@@ -606,9 +632,11 @@ private:
     {
       auto mask_nibble = [&](int gidx)
       {
-        if (gidx < first_group) return;
+        if (gidx < first_group)
+          return;
         int idx = gidx - first_group;
-        if (idx < 0 || idx >= (int)group_cols.size()) return;
+        if (idx < 0 || idx >= (int)group_cols.size())
+          return;
         int col = group_cols[idx];
         for (int i = 0; i < 4; ++i)
         {
@@ -616,7 +644,8 @@ private:
           if (pos >= 0 && pos < (int)bit_line.length())
           {
             char &c = bit_line[pos];
-            if (c == '0' || c == '1') c = '?';
+            if (c == '0' || c == '1')
+              c = '?';
           }
         }
       };
@@ -635,7 +664,7 @@ private:
         if (rl.display_bit >= low && rl.display_bit <= high)
         {
           int idx = gi - first_group;
-          int offset = (low + 3) - rl.display_bit; 
+          int offset = (low + 3) - rl.display_bit;
           rl.column_pos = group_cols[idx] + offset;
           break;
         }
@@ -652,7 +681,7 @@ private:
         if (bitpos >= low && bitpos <= high)
         {
           int idx = gi - first_group;
-          int offset = (low + 3) - bitpos; 
+          int offset = (low + 3) - bitpos;
           return group_cols[idx] + offset;
         }
       }
@@ -669,13 +698,13 @@ private:
       }
     }
 
-    if ((flags & 0x00000100ULL) == 0) 
+    if ((flags & 0x00000100ULL) == 0)
     {
       for (int bit = 0; bit < 8; ++bit)
       {
         int colpos = bit_to_column(bit);
         if (colpos >= 0 && colpos < header_len)
-          column_bit_color[colpos] = COLOR_AUTOCMT; 
+          column_bit_color[colpos] = COLOR_AUTOCMT;
       }
     }
 
@@ -705,7 +734,8 @@ private:
   {
     for (auto &rl : out_lines)
     {
-      if (rl.group < first_group) continue; 
+      if (rl.group < first_group)
+        continue;
       qstring row(header_len, ' ');
       int anchor_pos = rl.column_pos < 0 ? 0 : rl.column_pos;
       for (auto &rl2 : out_lines)
@@ -748,6 +778,7 @@ private:
 
 static void dissect_flags_verbose(flags64_t flags, strvec_t &lines)
 {
+  lines.add(simpleline_t("Flags:"));
   FlagsDissector(flags, lines).dissect();
 }
 
@@ -825,6 +856,23 @@ void plugin_ctx_t::refresh_view()
     for (int i = 0; i < UA_MAXOP && insn.ops[i].type != o_void; ++i)
     {
       dump_operand(insn.ops[i], lines);
+    }
+    eavec_t args;
+    get_arg_addrs(&args, ea);
+    if (!args.empty())
+    {
+
+      lines.push_back(simpleline_t("")); // empty line
+      lines.push_back(simpleline_t("argument addresses:"));
+
+      for (auto &&[i, a] : enumerate(args))
+      {
+        qstring argaddr;
+        generate_disasm_line(&disasm, a, GENDSM_FORCE_CODE | GENDSM_MULTI_LINE);
+
+        argaddr.sprnt(" [%lu]  %#llx: %s", i, a, disasm.c_str());
+        lines.push_back(simpleline_t(argaddr.c_str()));
+      }
     }
   }
   else
@@ -960,7 +1008,7 @@ ssize_t plugin_ctx_t::get_custom_viewer_hint(qstring *hint, TWidget *viewer, con
     const char *desc = FlagRegistry::get().get_description(word.c_str());
     if (desc != nullptr)
     {
-      msg("found description for word: %s - %s\n", word.c_str(), desc);
+      // msg("found description for word: %s - %s\n", word.c_str(), desc);
       hint->cat_sprnt("%s: %s\n", word.c_str(), desc);
       (*important_lines)++;
     }
@@ -968,7 +1016,7 @@ ssize_t plugin_ctx_t::get_custom_viewer_hint(qstring *hint, TWidget *viewer, con
     {
       msg("no description for word: %s\n", word.c_str());
     }
-    msg("word under cursor: %s", word.c_str());
+    // msg("word under cursor: %s", word.c_str());
   }
 
   return 0;
