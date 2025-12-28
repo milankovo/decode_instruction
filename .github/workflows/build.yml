@@ -105,7 +105,7 @@ jobs:
         env:
           IDASDK: ${{ github.workspace }}/ida-sdk
         run: |
-          cmake -B build -DEA64=YES -S . \
+          cmake -B build -DEA64=YES -S src \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
           cmake --build build --config Release

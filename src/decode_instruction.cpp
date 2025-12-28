@@ -125,7 +125,7 @@ plugin_ctx_t::plugin_ctx_t()
   addon_info.name = "Decode instruction";
   addon_info.producer = "Milanek";
   addon_info.url = "https://github.com/milankovo/decode_instruction";
-  addon_info.version = "1.0";
+  addon_info.version = "1.0.0";
   current_processor = PH.id;
   register_addon(&addon_info);
 }
@@ -1022,6 +1022,44 @@ ssize_t plugin_ctx_t::get_custom_viewer_hint(qstring *hint, TWidget *viewer, con
   return 0;
 }
 
+bool idaapi on_double_click(TWidget *cv, int shift, void *ud)
+{
+  plugin_ctx_t *ctx = static_cast<plugin_ctx_t *>(ud);
+  if (ctx == nullptr)
+    return false;
+
+  qstring line;
+
+  if (!ctx->get_current_word(true, line))
+    return false;
+
+  msg("double clicked word: %s\n", line.c_str());
+
+  if (line.empty())
+    return false;
+
+  ea_t ea = BADADDR;
+
+  if (!str2ea(&ea, line.c_str()))
+    return false;
+
+  if (!is_mapped(ea))
+    return false;
+
+  if (ea == BADADDR)
+    return false;
+
+  jumpto(ea);
+
+  return true;
+}
+
+constexpr custom_viewer_handlers_t my_handlers(nullptr,
+                                               nullptr,
+                                               nullptr,
+                                               nullptr,
+                                               on_double_click);
+
 bool idaapi plugin_ctx_t::run(size_t)
 {
   if (widget)
@@ -1032,7 +1070,7 @@ bool idaapi plugin_ctx_t::run(size_t)
 
   simpleline_place_t s1, s2;
 
-  widget = create_custom_viewer("Item details", &s1, &s2, &s1, nullptr, &lines, nullptr, this);
+  widget = create_custom_viewer("Item details", &s1, &s2, &s1, nullptr, &lines, &my_handlers, this);
   if (!widget)
     return false;
 

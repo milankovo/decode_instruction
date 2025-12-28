@@ -1,4 +1,4 @@
-auto instructions_PLFM_ARM = flags_vector_t{
+const auto instructions_PLFM_ARM = flags_vector_t{
 	TO_ENUM(ARM_null, "Undocumented instruction ARM_null"),
 	TO_ENUM(ARM_ret, "Return from Subroutine"),
 	TO_ENUM(ARM_nop, "No Operation"),
