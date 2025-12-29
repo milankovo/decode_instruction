@@ -1,4 +1,5 @@
 # Decode Instruction Plugin
+![logo](logo.jpeg)
 ![alt text](img/image-9.png)
 
 The Decode Instruction plugin is an IDA Pro plugin that provides detailed information about the instruction at the current cursor position. The plugin displays comprehensive instruction details including:
