@@ -11,7 +11,7 @@
       "ui-ux-and-visualization"
     ],
     "idaVersions": ">=9.2",
-    "logoPath": "logo.png",
+    "logoPath": "logo.jpeg",
     "description": "The decode_instruction plugin is an IDA Pro plugin that provides information about current instruction.",
     "version": "1.0.0",
     "authors": [
