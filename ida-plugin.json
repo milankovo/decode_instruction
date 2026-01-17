@@ -2,23 +2,37 @@
   "IDAMetadataDescriptorVersion": 1,
   "plugin": {
     "name": "decode_instruction",
+    "version": "1.0.1",
+    "entryPoint": "decode_instruction",
+    "description": "Provides detailed information about the instruction at the current cursor position, including flags dissection, operand details, and argument addresses",
+    "license": "MIT",
     "urls": {
       "repository": "https://github.com/milankovo/decode_instruction"
     },
-    "entryPoint": "decode_instruction",
-    "categories": [
-      "disassembly-and-processor-modules",
-      "ui-ux-and-visualization"
-    ],
-    "idaVersions": ">=9.2",
-    "logoPath": "logo.jpeg",
-    "description": "The decode_instruction plugin is an IDA Pro plugin that provides information about current instruction.",
-    "version": "1.0.0",
     "authors": [
       {
         "name": "Milanek",
         "email": "decode_instruction@noreply.github.com"
       }
-    ]
+    ],
+    "idaVersions": ">=9.2",
+    "platforms": [
+      "windows-x86_64",
+      "linux-x86_64",
+      "macos-x86_64",
+      "macos-aarch64"
+    ],
+    "categories": [
+      "disassembly-and-processor-modules",
+      "ui-ux-and-visualization"
+    ],
+    "keywords": [
+      "instruction",
+      "disassembly",
+      "analysis",
+      "operands",
+      "flags"
+    ],
+    "logoPath": "logo.jpeg"
   }
 }

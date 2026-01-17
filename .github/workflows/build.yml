@@ -116,6 +116,8 @@ jobs:
           mkdir -p artifacts
           cp -v ./ida-sdk/bin/plugins/decode_instruction* artifacts/
           jq '.plugin.idaVersions = "==${{ matrix.ida.version }}"' ida-plugin.json > artifacts/ida-plugin.json
+          cp -v logo.jpeg artifacts/
+          cp -v README.md artifacts/
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4

@@ -125,7 +125,7 @@ plugin_ctx_t::plugin_ctx_t()
   addon_info.name = "Decode instruction";
   addon_info.producer = "Milanek";
   addon_info.url = "https://github.com/milankovo/decode_instruction";
-  addon_info.version = "1.0.0";
+  addon_info.version = "1.0.1";
   current_processor = PH.id;
   register_addon(&addon_info);
 }

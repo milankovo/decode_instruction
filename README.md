@@ -15,7 +15,15 @@ The Decode Instruction plugin is an IDA Pro plugin that provides detailed inform
 ![alt text](img/image-3.png)
 ## Installation
 
-To install the Decode Instruction plugin, follow these steps:
+### Via IDA Plugin Manager
+
+```bash
+hcli plugin install decode_instruction
+```
+
+### Manual Installation
+
+To install the Decode Instruction plugin manually, follow these steps:
 
 1. Copy the `decode_instruction.(dll|so|dylib)` file to the IDA plugins (`idaapi.get_ida_subdirs("plugins")`) folder.
 2. Launch IDA Pro.
